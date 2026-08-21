@@ -2,12 +2,9 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Dashboard Protected</title>
-    
-    <!-- Thư viện vẽ biểu đồ Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <!-- Link liên kết đến file habits.js -->
     <script src="habits.js"></script>
 
@@ -51,9 +48,9 @@
             font-size: 16px;
             text-align: center;
         }
-        
+
         /* ----- GIAO DIỆN DASHBOARD ----- */
-        #dashboard-content { display: none; } /* Mặc định ẩn Dashboard */
+        #dashboard-content { display: none; }
 
         h1 { font-size: 1.4rem; text-align: center; margin: 10px 0 15px 0; }
         h2 { font-size: 1.1rem; margin-top: 0; color: #2c3e50; }
@@ -65,25 +62,112 @@
             margin-bottom: 15px;
         }
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; min-width: 480px; }
-        th, td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 14px; }
-        th:first-child, td:first-child { text-align: left; font-weight: bold; width: 35%; word-break: break-word; }
-        
+        table { border-collapse: collapse; }
+        th, td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 14px; white-space: nowrap; }
+        th small { display: block; font-weight: normal; color: #94a3b8; font-size: 11px; }
+
         .habit-check { width: 22px; height: 22px; cursor: pointer; accent-color: #2ecc71; }
         .chart-container { position: relative; height: 220px; width: 100%; }
-        
+
         .add-form { display: flex; gap: 8px; margin-top: 15px; }
         .add-form input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
-        
+
         .btn { padding: 10px 14px; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; }
         .btn-primary { background-color: #3498db; color: white; }
         .btn-success { background-color: #2ecc71; color: white; margin-top: 12px; width: 100%; padding: 12px; }
+        .btn-secondary { background-color: #eef2f7; color: #3498db; margin-top: 8px; width: 100%; padding: 10px; }
         .error-msg { color: #e74c3c; font-weight: bold; font-size: 13px; margin-top: 8px; }
+        .sync-note { font-size: 12px; color: #94a3b8; text-align: center; margin-top: 6px; }
+
+        /* ----- Nút điều hướng dùng chung (tuần & tháng) ----- */
+        .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+        .cal-nav-btn {
+            background: #eef2f7; color: #3498db; border: none; border-radius: 6px;
+            width: 36px; height: 36px; font-size: 16px; cursor: pointer; flex-shrink: 0;
+        }
+        .cal-title { font-weight: bold; font-size: 15px; text-align: center; flex: 1; }
+
+        /* ----- BẢNG ĐÁNH DẤU THEO TUẦN (ô to, dễ chạm, không cuộn ngang) ----- */
+        #week-table th, #week-table td { min-width: 40px; }
+        #week-table th:first-child, #week-table td:first-child {
+            text-align: left; font-weight: bold; width: 30%; white-space: normal; word-break: break-word;
+        }
+        #week-table-body td.future-cell { color: #cbd5e1; background: #f4f6f9; }
+
+        /* ----- BẢNG TỔNG QUAN CẢ THÁNG (ô thu nhỏ để đỡ phải cuộn ngang) ----- */
+        #month-table-body td.future-cell { color: #cbd5e1; background: #f4f6f9; }
+        th.total-head, td.total-cell { font-weight: bold; color: #2ecc71; background: #f0fbf4; }
+        #month-table th, #month-table td { min-width: 22px; padding: 6px 2px; font-size: 11px; }
+        #month-table th small { font-size: 9px; }
+
+        .mini-check {
+            width: 15px; height: 15px; border-radius: 4px;
+            background: #e2e8f0; margin: 0 auto; cursor: pointer;
+        }
+        .mini-check.on { background: #2ecc71; }
+        .mini-check.on-bad { background: #e74c3c; }
+
+        /* ----- LOẠI THÓI QUEN ----- */
+        .add-form-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .add-form-row select {
+            padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #fff; color: #2c3e50;
+        }
+        .add-form-row select#new-habit-type { flex: 1 1 140px; }
+        .add-form-label { font-size: 12px; color: #64748b; margin-top: 10px; margin-bottom: -2px; }
+
+        /* ----- Nút xóa thói quen & dòng phân cách nhóm ----- */
+        .habit-name-cell { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+        .delete-btn {
+            flex-shrink: 0; border: none; background: transparent; color: #cbd5e1;
+            font-size: 14px; cursor: pointer; padding: 2px 4px; line-height: 1;
+        }
+        .delete-btn:active { color: #e74c3c; }
+        .group-divider td {
+            background: #fef2f2; color: #e74c3c; font-weight: bold; font-size: 11px;
+            text-align: left !important; padding: 6px 8px !important; white-space: normal;
+        }
+        #month-table .group-divider td:first-child { position: static; box-shadow: none; }
+
+        /* ----- MỤC TIÊU TRỌNG TÂM ----- */
+        .quick-goal-form { display: flex; gap: 8px; margin-bottom: 4px; }
+        .quick-goal-form input {
+            flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;
+        }
+        .quick-goal-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+        .quick-goal-row:last-of-type { border-bottom: none; }
+        .quick-goal-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: #2ecc71; flex-shrink: 0; cursor: pointer; }
+        .quick-goal-row .goal-text { flex: 1; font-size: 14px; }
+        .quick-goal-row .goal-text.done { text-decoration: line-through; color: #94a3b8; }
+        .goals-divider {
+            font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase;
+            margin: 14px 0 4px; padding-top: 10px; border-top: 1px solid #e2e8f0;
+        }
+        .quick-empty { font-size: 12px; color: #94a3b8; margin: 4px 0; }
+        .goals-details { margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; }
+        .goals-details summary {
+            font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase;
+            cursor: pointer; list-style: none;
+        }
+        .goals-details summary::-webkit-details-marker { display: none; }
+        .goals-details summary::after { content: ' ▸'; }
+        .goals-details[open] summary::after { content: ' ▾'; }
+        .goals-details .quick-goal-row:first-of-type { margin-top: 8px; }
+
+        /* Cột "Thói quen" cố định bên trái khi cuộn ngang, không co lại theo số cột ngày */
+        #month-table th:first-child, #month-table td:first-child {
+            position: sticky; left: 0; z-index: 2;
+            background: #ffffff;
+            text-align: left; font-weight: bold; font-size: 13px;
+            width: 96px; min-width: 96px; max-width: 96px;
+            white-space: normal; word-break: break-word; line-height: 1.25;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+        }
+        #month-table thead th:first-child { z-index: 3; }
     </style>
 </head>
 <body>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP (BẢO MẬT) -->
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
     <div id="login-screen">
         <div class="login-card">
             <h2>🔒 Yêu Cầu Mật Khẩu</h2>
@@ -94,47 +178,93 @@
         </div>
     </div>
 
-    <!-- NỘI DUNG DASHBOARD (CHỈ HIỆN KHI ĐÚNG MẬT KHẨU) -->
+    <!-- NỘI DUNG DASHBOARD -->
     <div id="dashboard-content">
         <h1>📊 Habit Dashboard</h1>
-        
+
         <div class="card">
-            <h2>📅 Bảng Theo Dõi Trong Tuần</h2>
+            <h2>🎯 Mục Tiêu Trọng Tâm</h2>
+            <div id="goals-list"></div>
+        </div>
+
+        <div class="card">
+            <h2>✅ Đánh Dấu Theo Tuần</h2>
+            <div class="cal-header">
+                <button class="cal-nav-btn" onclick="changeWeek(-1)">◀</button>
+                <div class="cal-title" id="week-title"></div>
+                <button class="cal-nav-btn" onclick="changeWeek(1)">▶</button>
+            </div>
             <div class="table-responsive">
-                <table>
+                <table id="week-table">
                     <thead>
-                        <tr>
+                        <tr id="week-table-head-row">
                             <th>Thói quen</th>
-                            <th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body">
-                        <tr><td colspan="8">Đang tải dữ liệu...</td></tr>
+                    <tbody id="week-table-body">
+                        <tr><td>Đang tải dữ liệu...</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="add-form">
                 <input type="text" id="new-habit-input" placeholder="Nhập thói quen mới...">
-                <button class="btn btn-primary" onclick="addNewHabit()">+ Thêm</button>
             </div>
-
-            <button class="btn btn-success" onclick="exportUpdatedJS()">💾 Tải File habits.js Cập Nhật</button>
+            <div class="add-form-label">Loại thói quen</div>
+            <div class="add-form-row">
+                <select id="new-habit-type">
+                    <option value="tich_cuc">Tích cực (muốn làm)</option>
+                    <option value="can_giam">Cần giảm (muốn tránh)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addNewHabit()">+ Thêm thói quen</button>
         </div>
 
         <div class="card">
-            <h2>📈 Biểu Đồ Mức Độ Hoàn Thành</h2>
-            <div class="chart-container">
-                <canvas id="habitChart"></canvas>
+            <h2>🗓️ Tổng Quan Cả Tháng</h2>
+            <p style="font-size:12px; color:#94a3b8; margin:-6px 0 12px;">Ô thu nhỏ để xem tổng quan, vẫn chạm được để đánh dấu bù ngày cũ.</p>
+            <div class="cal-header">
+                <button class="cal-nav-btn" onclick="changeCalMonth(-1)">◀</button>
+                <div class="cal-title" id="cal-title"></div>
+                <button class="cal-nav-btn" onclick="changeCalMonth(1)">▶</button>
             </div>
+            <div class="table-responsive">
+                <table id="month-table">
+                    <thead>
+                        <tr id="month-table-head-row">
+                            <th>Thói quen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="month-table-body">
+                        <tr><td>Đang tải dữ liệu...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn btn-success" onclick="exportUpdatedJS()">💾 Tải File habits.js Cập Nhật</button>
+            <button class="btn btn-secondary" onclick="forceSyncFromFile()">🔄 Đồng bộ lại từ file</button>
+            <div class="sync-note" id="sync-note"></div>
         </div>
     </div>
 
     <script>
-        // CHUỖI HASH SHA-256 CỦA MẬT KHẨU MẶC ĐỊNH "123456"
+        /* ==========================================================
+           MẬT KHẨU — băm SHA-256.
+           Đây chỉ là khóa ở mức giao diện: vì HTML/JS chạy hoàn toàn
+           phía trình duyệt, bất kỳ ai có link đều có thể xem mã nguồn
+           (View Source) và thấy chuỗi hash này. Không dùng lại mật
+           khẩu quan trọng ở nơi khác cho ô này. Nếu cần bảo mật thật,
+           dùng tính năng Password Protection có sẵn của Vercel.
+
+           Cách tạo hash mật khẩu mới: mở Console trình duyệt (F12),
+           chạy:
+             crypto.subtle.digest("SHA-256", new TextEncoder().encode("matkhau_moi"))
+               .then(b => console.log([...new Uint8Array(b)]
+                 .map(x => x.toString(16).padStart(2,"0")).join("")));
+           rồi dán chuỗi hex in ra vào CORRECT_PASSWORD_HASH bên dưới.
+           ========================================================== */
         const CORRECT_PASSWORD_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-        // Hàm băm mật khẩu bằng thuật toán SHA-256 chuẩn Web Crypto API
         async function sha256(str) {
             const buffer = new TextEncoder().encode(str);
             const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
@@ -142,17 +272,14 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // Kiểm tra mật khẩu người dùng nhập
         async function checkPassword() {
             const inputPass = document.getElementById('password-input').value;
             const inputHash = await sha256(inputPass);
 
             if (inputHash === CORRECT_PASSWORD_HASH) {
-                // Đúng mật khẩu: Lưu trạng thái vào Session & Hiện Dashboard
                 sessionStorage.setItem('isLoggedIn', 'true');
                 unlockDashboard();
             } else {
-                // Sai mật khẩu: Hiện thông báo lỗi
                 document.getElementById('login-error').style.display = 'block';
             }
         }
@@ -164,106 +291,430 @@
         function unlockDashboard() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
-            initApp(); // Khởi tạo dữ liệu và biểu đồ
+            initApp();
         }
 
-        // Kiểm tra khi tải trang
         document.addEventListener("DOMContentLoaded", function() {
             if (sessionStorage.getItem('isLoggedIn') === 'true') {
                 unlockDashboard();
             }
         });
 
-        /* ----- LOGIC XỬ LÝ DASHBOARD ----- */
-        let myChart = null;
-        let localData = [];
+        /* ==========================================================
+           DỮ LIỆU & ĐỒNG BỘ
 
-        function initApp() {
-            const savedData = localStorage.getItem('myHabitData');
-            if (savedData) {
-                try { localData = JSON.parse(savedData); } catch(e) { localData = []; }
-            }
-            if ((!localData || localData.length === 0) && typeof habitData !== 'undefined' && Array.isArray(habitData)) {
-                localData = JSON.parse(JSON.stringify(habitData));
-            }
+           habits.js cần export theo cấu trúc:
+             const habitData = [
+               { Habit: "Đọc sách", type: "tich_cuc", target: 4, targetPeriod: "week",
+                 log: { "2026-08-17": 1, "2026-08-18": 0, ... } },
+               { Habit: "Hút thuốc", type: "can_giam", target: 2, targetPeriod: "week",
+                 log: { "2026-08-17": 0, ... } },
+               ...
+             ];
+             const habitDataMeta = { generatedAt: "2026-08-21T09:00:00" };
 
-            if (localData && localData.length > 0) {
-                renderTable();
-                renderChart();
-            } else {
-                document.getElementById('table-body').innerHTML = 
-                    `<tr><td colspan="8" class="error-msg">❌ Không thấy dữ liệu habits.js! Vui lòng kiểm tra lại.</td></tr>`;
+           - Mỗi ngày là MỘT key riêng theo ngày thật (yyyy-mm-dd),
+             không còn bị ghi đè lặp lại mỗi tuần.
+           - generatedAt cho biết file này được xuất từ Excel lúc nào,
+             dùng để quyết định file hay cache trên điện thoại "thắng".
+           - type: "tich_cuc" (mặc định, tick = tốt) hoặc "can_giam"
+             (tick = vi phạm, càng ít càng tốt).
+           - target/targetPeriod: không còn dùng qua giao diện (đã bỏ tính
+             năng mục tiêu theo số lần), luôn để null khi tạo mới. Field
+             vẫn còn trong schema để tương thích ngược, không cần xóa khỏi
+             dữ liệu cũ.
+           ========================================================== */
+        let localData = [];   // mảng habit đang dùng để render
+        let localMeta = null; // { updatedAt }
+
+        const STORAGE_DATA_KEY = "myHabitData";
+        const STORAGE_META_KEY = "myHabitMeta";
+
+        function loadCache() {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_DATA_KEY));
+                const meta = JSON.parse(localStorage.getItem(STORAGE_META_KEY));
+                return { data: Array.isArray(data) ? data : null, meta: meta || null };
+            } catch (e) {
+                return { data: null, meta: null };
             }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('table-body');
+        function saveCache() {
+            localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify(localData));
+            localStorage.setItem(STORAGE_META_KEY, JSON.stringify(localMeta));
+        }
+
+        // gộp thói quen mới xuất hiện trong file (thêm qua Excel) mà cache chưa có
+        function mergeNewHabitsFromFile(cachedHabits, fileHabits) {
+            if (!Array.isArray(fileHabits)) return cachedHabits;
+            const existingNames = new Set(cachedHabits.map(h => h.Habit));
+            fileHabits.forEach(fh => {
+                if (!existingNames.has(fh.Habit)) {
+                    cachedHabits.push({
+                        Habit: fh.Habit,
+                        type: fh.type === 'can_giam' ? 'can_giam' : 'tich_cuc',
+                        target: fh.target || null,
+                        targetPeriod: fh.targetPeriod || null,
+                        log: { ...(fh.log || {}) }
+                    });
+                }
+            });
+            return cachedHabits;
+        }
+
+        function initApp() {
+            const fileData = (typeof habitData !== 'undefined' && Array.isArray(habitData)) ? habitData : null;
+            const fileMeta = (typeof habitDataMeta !== 'undefined') ? habitDataMeta : null;
+            const cache = loadCache();
+
+            const fileTime = fileMeta && fileMeta.generatedAt ? new Date(fileMeta.generatedAt).getTime() : 0;
+            const cacheTime = cache.meta && cache.meta.updatedAt ? new Date(cache.meta.updatedAt).getTime() : 0;
+
+            if (!cache.data) {
+                // chưa có cache trên máy này → dùng file làm gốc
+                localData = fileData ? JSON.parse(JSON.stringify(fileData)) : [];
+                localMeta = { updatedAt: fileMeta ? fileMeta.generatedAt : new Date().toISOString() };
+                document.getElementById('sync-note').textContent = "Đã nạp dữ liệu từ habits.js.";
+            } else if (fileTime > cacheTime) {
+                // file được xuất mới hơn lần cập nhật cuối trên máy này → tin file (bạn vừa sửa hàng loạt trên Excel)
+                localData = fileData ? JSON.parse(JSON.stringify(fileData)) : cache.data;
+                localMeta = { updatedAt: fileMeta ? fileMeta.generatedAt : new Date().toISOString() };
+                document.getElementById('sync-note').textContent = "Đã cập nhật theo habits.js mới hơn.";
+            } else {
+                // cache mới hơn (bạn vừa tick trên điện thoại) → giữ cache, chỉ gộp thêm thói quen mới từ file
+                localData = mergeNewHabitsFromFile(cache.data, fileData);
+                localMeta = cache.meta;
+            }
+
+            if (!fileData && !cache.data) {
+                const msg = `<tr><td class="error-msg">❌ Không thấy dữ liệu habits.js! Vui lòng kiểm tra lại.</td></tr>`;
+                document.getElementById('week-table-body').innerHTML = msg;
+                document.getElementById('month-table-body').innerHTML = msg;
+                return;
+            }
+
+            saveCache();
+            renderGoalsTable();
+            renderWeekTable();
+            renderMonthTable();
+        }
+
+        function forceSyncFromFile() {
+            const fileData = (typeof habitData !== 'undefined' && Array.isArray(habitData)) ? habitData : null;
+            const fileMeta = (typeof habitDataMeta !== 'undefined') ? habitDataMeta : null;
+            if (!fileData) { alert('Không tìm thấy dữ liệu trong habits.js hiện tại.'); return; }
+            localData = JSON.parse(JSON.stringify(fileData));
+            localMeta = { updatedAt: fileMeta ? fileMeta.generatedAt : new Date().toISOString() };
+            saveCache();
+            document.getElementById('sync-note').textContent = "Đã đồng bộ lại toàn bộ theo habits.js.";
+            renderGoalsTable();
+            renderWeekTable();
+            renderMonthTable();
+        }
+
+        /* ----- Tính 7 ngày thật của tuần hiện tại (Thứ 2 → Chủ nhật) ----- */
+        function formatDate(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+        function getWeekDates(refDate) {
+            const dayIdx = refDate.getDay(); // 0=CN,1=T2,...6=T7
+            const mondayOffset = dayIdx === 0 ? -6 : 1 - dayIdx;
+            const monday = new Date(refDate);
+            monday.setDate(refDate.getDate() + mondayOffset);
+
+            const labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+            const week = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                week.push({ key: formatDate(d), label: labels[i], dateNum: d.getDate() });
+            }
+            return week;
+        }
+        function getCurrentWeekDates() {
+            return getWeekDates(new Date());
+        }
+
+        /* ----- Helper dùng chung cho loại thói quen & mục tiêu ----- */
+        function normalizeHabit(row) {
+            row.log = row.log || {};
+            row.type = (row.type === 'can_giam' || row.type === 'muc_tieu') ? row.type : 'tich_cuc';
+            return row;
+        }
+
+        function habitDisplayName(row) {
+            return row.type === 'can_giam' ? `⚠️ ${row.Habit || 'Chưa đặt tên'}` : (row.Habit || 'Chưa đặt tên');
+        }
+
+        // sắp xếp thứ tự hiển thị: thói quen tích cực trước, cần giảm sau —
+        // vẫn giữ nguyên rowIndex gốc trong localData để toggleHabit/deleteHabit hoạt động đúng
+        function groupHabitsForDisplay() {
+            const positives = [];
+            const negatives = [];
+            localData.forEach((row, idx) => {
+                normalizeHabit(row);
+                if (row.type === 'muc_tieu') return; // mục tiêu tự thêm hiện riêng ở card Mục Tiêu Trọng Tâm
+                (row.type === 'can_giam' ? negatives : positives).push({ row, idx });
+            });
+            return { positives, negatives };
+        }
+
+        function deleteHabit(rowIndex) {
+            const name = localData[rowIndex] ? localData[rowIndex].Habit : '';
+            const ok = confirm(`Xóa thói quen "${name}"? Toàn bộ lịch sử đánh dấu của thói quen này sẽ mất, không khôi phục được.`);
+            if (!ok) return;
+            localData.splice(rowIndex, 1);
+            localMeta = { updatedAt: new Date().toISOString() };
+            saveCache();
+            renderGoalsTable();
+            renderWeekTable();
+            renderMonthTable();
+        }
+
+        /* ==========================================================
+           BẢNG ĐÁNH DẤU THEO TUẦN
+           - Luôn 7 cột nên không cần cuộn ngang, ô checkbox cỡ lớn
+             dễ chạm trên điện thoại.
+           - Có thể lùi/tiến qua các tuần khác (không chỉ tuần hiện
+             tại) để tick bù nếu quên, hoặc xem lại tuần trước.
+           ========================================================== */
+        let weekAnchor = new Date(); // 1 ngày bất kỳ trong tuần đang xem
+
+        function changeWeek(deltaWeeks) {
+            weekAnchor.setDate(weekAnchor.getDate() + deltaWeeks * 7);
+            renderWeekTable();
+        }
+
+        function keyToDMY(key) {
+            const [y, m, d] = key.split('-');
+            return `${d}/${m}`;
+        }
+
+        function renderWeekTable() {
+            const week = getWeekDates(weekAnchor);
+            const todayKey = formatDate(new Date());
+            document.getElementById('week-title').textContent =
+                `${keyToDMY(week[0].key)} – ${keyToDMY(week[6].key)}/${week[6].key.split('-')[0]}`;
+
+            const headRow = document.getElementById('week-table-head-row');
+            headRow.innerHTML = '<th>Thói quen</th>' +
+                week.map(w => `<th>${w.label}<small>${w.dateNum}</small></th>`).join('');
+
+            const tbody = document.getElementById('week-table-body');
             tbody.innerHTML = '';
-            localData.forEach((row, rowIndex) => {
+
+            function renderRow(row, rowIndex) {
                 const tr = document.createElement('tr');
-                let html = `<td>${row.Habit || 'Chưa đặt tên'}</td>`;
-                const days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-                days.forEach(day => {
-                    const isChecked = Number(row[day]) === 1 ? 'checked' : '';
-                    html += `<td>
-                        <input type="checkbox" class="habit-check" ${isChecked} 
-                               onchange="toggleHabit(${rowIndex}, '${day}', this.checked)">
-                    </td>`;
+                let html = `<td>
+                    <div class="habit-name-cell">
+                        <span>${habitDisplayName(row)}</span>
+                        <button class="delete-btn" onclick="deleteHabit(${rowIndex})" title="Xóa thói quen">✕</button>
+                    </div>
+                </td>`;
+                week.forEach(w => {
+                    if (w.key > todayKey) {
+                        html += `<td class="future-cell">–</td>`;
+                    } else {
+                        const isChecked = Number(row.log[w.key]) === 1 ? 'checked' : '';
+                        const accent = row.type === 'can_giam' ? 'style="accent-color:#e74c3c;"' : '';
+                        html += `<td>
+                            <input type="checkbox" class="habit-check" ${accent} ${isChecked}
+                                   onchange="toggleHabit(${rowIndex}, '${w.key}', this.checked)">
+                        </td>`;
+                    }
                 });
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
-            });
+            }
+
+            const { positives, negatives } = groupHabitsForDisplay();
+            positives.forEach(({ row, idx }) => renderRow(row, idx));
+            if (negatives.length > 0) {
+                const divider = document.createElement('tr');
+                divider.className = 'group-divider';
+                divider.innerHTML = `<td colspan="8">⚠️ CẦN GIẢM</td>`;
+                tbody.appendChild(divider);
+                negatives.forEach(({ row, idx }) => renderRow(row, idx));
+            }
         }
 
-        function toggleHabit(rowIndex, day, isChecked) {
-            localData[rowIndex][day] = isChecked ? 1 : 0;
-            localStorage.setItem('myHabitData', JSON.stringify(localData));
-            renderChart();
+        function toggleHabit(rowIndex, dateKey, isChecked) {
+            localData[rowIndex].log = localData[rowIndex].log || {};
+            localData[rowIndex].log[dateKey] = isChecked ? 1 : 0;
+            localMeta = { updatedAt: new Date().toISOString() };
+            saveCache();
+            renderGoalsTable();
+            renderWeekTable();
+            renderMonthTable();
         }
 
         function addNewHabit() {
             const input = document.getElementById('new-habit-input');
             const name = input.value.trim();
             if (!name) return alert('Vui lòng nhập tên thói quen!');
-            localData.push({ Habit: name, T2: 0, T3: 0, T4: 0, T5: 0, T6: 0, T7: 0, CN: 0 });
-            localStorage.setItem('myHabitData', JSON.stringify(localData));
+
+            const type = document.getElementById('new-habit-type').value; // 'tich_cuc' | 'can_giam'
+
+            localData.push({ Habit: name, type, target: null, targetPeriod: null, log: {} });
+            localMeta = { updatedAt: new Date().toISOString() };
+            saveCache();
             input.value = '';
-            renderTable();
-            renderChart();
+            renderGoalsTable();
+            renderWeekTable();
+            renderMonthTable();
         }
 
-        function renderChart() {
-            const days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-            let dailyTotals = [0, 0, 0, 0, 0, 0, 0];
-            localData.forEach(row => {
-                days.forEach((day, index) => {
-                    if (Number(row[day]) === 1) dailyTotals[index]++;
-                });
+        function renderGoalsTable() {
+            const container = document.getElementById('goals-list');
+            const todayKey = formatDate(new Date());
+
+            const quickGoals = [];
+            localData.forEach((row, idx) => {
+                normalizeHabit(row);
+                if (row.type === 'muc_tieu') quickGoals.push({ row, idx });
             });
 
-            const ctx = document.getElementById('habitChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: days,
-                    datasets: [{
-                        label: 'Số thói quen hoàn thành',
-                        data: dailyTotals,
-                        backgroundColor: '#3498db',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            function quickGoalRowHtml({ row, idx }, done) {
+                return `
+                    <div class="quick-goal-row">
+                        <input type="checkbox" ${done ? 'checked' : ''}
+                               onchange="toggleHabit(${idx}, '${todayKey}', this.checked)">
+                        <span class="goal-text ${done ? 'done' : ''}">${row.Habit}</span>
+                        <button class="delete-btn" onclick="deleteHabit(${idx})" title="Xóa mục tiêu">✕</button>
+                    </div>`;
+            }
+
+            let quickHtml = '';
+            if (quickGoals.length === 0) {
+                quickHtml = `<p style="font-size:12px; color:#94a3b8; margin:8px 0 0;">Chưa có mục tiêu nào — thêm ở ô bên trên.</p>`;
+            } else {
+                const pending = quickGoals.filter(g => Number(g.row.log[todayKey]) !== 1);
+                const completed = quickGoals.filter(g => Number(g.row.log[todayKey]) === 1);
+
+                quickHtml += `<div class="goals-divider">Đang cần thực hiện (${pending.length})</div>`;
+                quickHtml += pending.length
+                    ? pending.map(g => quickGoalRowHtml(g, false)).join('')
+                    : `<p class="quick-empty">Không còn mục tiêu nào đang chờ 🎉</p>`;
+
+                if (completed.length > 0) {
+                    quickHtml += `
+                        <details class="goals-details">
+                            <summary>Đã hoàn thành (${completed.length})</summary>
+                            ${completed.map(g => quickGoalRowHtml(g, true)).join('')}
+                        </details>`;
                 }
-            });
+            }
+
+            container.innerHTML = `
+                <div class="quick-goal-form">
+                    <input type="text" id="quick-goal-input" placeholder="Thêm mục tiêu tuần này..."
+                           onkeypress="if(event.key==='Enter') addQuickGoal()">
+                    <button class="btn btn-primary" onclick="addQuickGoal()">+ Thêm</button>
+                </div>
+                ${quickHtml}
+            `;
+        }
+
+        function addQuickGoal() {
+            const input = document.getElementById('quick-goal-input');
+            const text = input.value.trim();
+            if (!text) return;
+            localData.push({ Habit: text, type: 'muc_tieu', target: null, targetPeriod: null, log: {} });
+            localMeta = { updatedAt: new Date().toISOString() };
+            saveCache();
+            input.value = '';
+            renderGoalsTable();
+        }
+
+        /* ==========================================================
+           BẢNG ĐÁNH DẤU CẢ THÁNG
+           - Mỗi thói quen 1 hàng, mỗi ngày trong tháng 1 cột (kèm
+             đúng thứ + số ngày), cột cuối "Tổng" đếm số lần hoàn
+             thành trong tháng đang xem.
+           - Vẫn dùng chung field "log" theo ngày thật đã có, và dùng
+             lại đúng hàm toggleHabit() nên tick bù ngày cũ cũng lưu
+             đúng như tick "hôm nay" ở bảng tuần.
+           ========================================================== */
+        let calYear = new Date().getFullYear();
+        let calMonth = new Date().getMonth(); // 0 = Tháng 1
+
+        function changeCalMonth(delta) {
+            calMonth += delta;
+            if (calMonth < 0) { calMonth = 11; calYear--; }
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            renderMonthTable();
+        }
+
+        function renderMonthTable() {
+            const monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
+                                 'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+            document.getElementById('cal-title').textContent = `${monthNames[calMonth]}, ${calYear}`;
+
+            const weekdayLabels = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']; // theo Date.getDay()
+            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+            const todayKey = formatDate(new Date());
+
+            const dayList = [];
+            for (let day = 1; day <= daysInMonth; day++) {
+                const d = new Date(calYear, calMonth, day);
+                dayList.push({ day, key: formatDate(d), label: weekdayLabels[d.getDay()] });
+            }
+
+            const headRow = document.getElementById('month-table-head-row');
+            headRow.innerHTML = '<th>Thói quen</th>' +
+                dayList.map(d => `<th>${d.label}<small>${d.day}</small></th>`).join('') +
+                '<th class="total-head">Tổng</th>';
+
+            const tbody = document.getElementById('month-table-body');
+            tbody.innerHTML = '';
+            const colCount = dayList.length + 2; // tên + các ngày + Tổng
+
+            function renderRow(row, rowIndex) {
+                let total = 0;
+                let cellsHtml = '';
+                dayList.forEach(d => {
+                    const isChecked = Number(row.log[d.key]) === 1;
+                    if (isChecked && d.key <= todayKey) total++;
+                    if (d.key > todayKey) {
+                        cellsHtml += `<td class="future-cell">–</td>`;
+                    } else {
+                        const onClass = isChecked ? (row.type === 'can_giam' ? 'on-bad' : 'on') : '';
+                        cellsHtml += `<td>
+                            <div class="mini-check ${onClass}"
+                                 onclick="toggleHabit(${rowIndex}, '${d.key}', ${!isChecked})"></div>
+                        </td>`;
+                    }
+                });
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>
+                        <div class="habit-name-cell">
+                            <span>${habitDisplayName(row)}</span>
+                            <button class="delete-btn" onclick="deleteHabit(${rowIndex})" title="Xóa thói quen">✕</button>
+                        </div>
+                    </td>${cellsHtml}<td class="total-cell">${total}</td>`;
+                tbody.appendChild(tr);
+            }
+
+            const { positives, negatives } = groupHabitsForDisplay();
+            positives.forEach(({ row, idx }) => renderRow(row, idx));
+            if (negatives.length > 0) {
+                const divider = document.createElement('tr');
+                divider.className = 'group-divider';
+                divider.innerHTML = `<td colspan="${colCount}">⚠️ CẦN GIẢM</td>`;
+                tbody.appendChild(divider);
+                negatives.forEach(({ row, idx }) => renderRow(row, idx));
+            }
         }
 
         function exportUpdatedJS() {
-            const fileContent = "const habitData = " + JSON.stringify(localData, null, 4) + ";";
+            const meta = { generatedAt: new Date().toISOString() };
+            const fileContent =
+                "const habitData = " + JSON.stringify(localData, null, 4) + ";\n" +
+                "const habitDataMeta = " + JSON.stringify(meta, null, 4) + ";\n";
             const blob = new Blob([fileContent], { type: "text/javascript;charset=utf-8" });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
