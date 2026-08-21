@@ -2,8 +2,10 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Cấu hình quan trọng nhất để fit màn hình điện thoại -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Habit Dashboard Interactive</title>
+    
     <!-- Thư viện vẽ biểu đồ Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -11,46 +13,75 @@
     <script src="habits.js"></script>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f6f9;
             color: #2c3e50;
-            padding: 20px;
-            max-width: 900px;
+            padding: 12px;
             margin: 0 auto;
+            max-width: 900px;
+        }
+        h1 {
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 10px 0 15px 0;
+        }
+        h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            color: #2c3e50;
         }
         .card {
             background: #ffffff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
         }
-        h1, h2 { color: #2c3e50; }
+        
+        /* Cho phép bảng tự cuộn ngang mượt mà trên điện thoại nhỏ */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            min-width: 480px; /* Đảm bảo bảng không bị xô lệch cột */
         }
         th, td {
-            padding: 10px;
+            padding: 8px 4px;
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
+            font-size: 14px;
         }
-        th:first-child, td:first-child { text-align: left; font-weight: bold; }
+        th:first-child, td:first-child { 
+            text-align: left; 
+            font-weight: bold; 
+            width: 35%;
+            word-break: break-word;
+        }
         
         .habit-check {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
             accent-color: #2ecc71;
         }
 
-        .chart-container { position: relative; height: 260px; }
+        .chart-container { 
+            position: relative; 
+            height: 220px; 
+            width: 100%;
+        }
         
         .add-form {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-top: 15px;
         }
         .add-form input {
@@ -61,25 +92,30 @@
             font-size: 14px;
         }
         .btn {
-            padding: 10px 18px;
+            padding: 10px 14px;
             border: none;
             border-radius: 6px;
             font-weight: bold;
+            font-size: 14px;
             cursor: pointer;
-            transition: 0.2s;
+            white-space: nowrap;
         }
         .btn-primary { background-color: #3498db; color: white; }
-        .btn-primary:hover { background-color: #2980b9; }
-        .btn-success { background-color: #2ecc71; color: white; margin-top: 15px; width: 100%; }
-        .btn-success:hover { background-color: #27ae60; }
+        .btn-success { 
+            background-color: #2ecc71; 
+            color: white; 
+            margin-top: 12px; 
+            width: 100%; 
+            padding: 12px;
+        }
         
         .error-msg {
             color: #e74c3c;
             font-weight: bold;
-            padding: 15px;
+            padding: 10px;
             background: #fdf2f2;
             border-radius: 8px;
-            border: 1px solid #f8b4b4;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -90,26 +126,28 @@
     <!-- Bảng hiển thị và tương tác -->
     <div class="card">
         <h2>📅 Bảng Theo Dõi Trong Tuần</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Thói quen</th>
-                    <th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                <tr><td colspan="8">Đang tải dữ liệu...</td></tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thói quen</th>
+                        <th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr><td colspan="8">Đang tải dữ liệu...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
         <!-- Form thêm thói quen mới -->
         <div class="add-form">
-            <input type="text" id="new-habit-input" placeholder="Nhập tên thói quen mới...">
+            <input type="text" id="new-habit-input" placeholder="Nhập thói quen mới...">
             <button class="btn btn-primary" onclick="addNewHabit()">+ Thêm</button>
         </div>
 
         <!-- Nút xuất file JS cập nhật -->
-        <button class="btn btn-success" onclick="exportUpdatedJS()">💾 Tải File habits.js Đã Cập Nhật</button>
+        <button class="btn btn-success" onclick="exportUpdatedJS()">💾 Tải File habits.js Cập Nhật</button>
     </div>
 
     <!-- Biểu đồ -->
@@ -125,7 +163,6 @@
         let localData = [];
 
         document.addEventListener("DOMContentLoaded", function() {
-            // 1. Kiểm tra xem có dữ liệu tạm đã lưu trong bộ nhớ trình duyệt chưa
             const savedData = localStorage.getItem('myHabitData');
             
             if (savedData) {
@@ -137,7 +174,6 @@
             }
             
             if ((!localData || localData.length === 0) && typeof habitData !== 'undefined' && Array.isArray(habitData)) {
-                // 2. Nếu chưa có thì đọc từ file habits.js gốc
                 localData = JSON.parse(JSON.stringify(habitData));
             }
 
@@ -150,7 +186,6 @@
             }
         });
 
-        // Hiển thị bảng tương tác bằng Checkbox
         function renderTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -173,17 +208,12 @@
             });
         }
 
-        // Xử lý khi người dùng bấm tích / bỏ tích
         function toggleHabit(rowIndex, day, isChecked) {
             localData[rowIndex][day] = isChecked ? 1 : 0;
-            
-            // Tự động lưu tạm vào trình duyệt (Không bị mất dữ liệu khi F5/Tắt web)
             localStorage.setItem('myHabitData', JSON.stringify(localData));
-            
             renderChart();
         }
 
-        // Thêm thói quen mới
         function addNewHabit() {
             const input = document.getElementById('new-habit-input');
             const name = input.value.trim();
@@ -194,7 +224,6 @@
 
             const newRow = { Habit: name, T2: 0, T3: 0, T4: 0, T5: 0, T6: 0, T7: 0, CN: 0 };
             localData.push(newRow);
-            
             localStorage.setItem('myHabitData', JSON.stringify(localData));
             
             input.value = '';
@@ -202,7 +231,6 @@
             renderChart();
         }
 
-        // Vẽ lại Biểu đồ
         function renderChart() {
             const days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
             let dailyTotals = [0, 0, 0, 0, 0, 0, 0];
@@ -229,7 +257,7 @@
                         label: 'Số thói quen hoàn thành',
                         data: dailyTotals,
                         backgroundColor: '#3498db',
-                        borderRadius: 6
+                        borderRadius: 4
                     }]
                 },
                 options: {
@@ -242,7 +270,6 @@
             });
         }
 
-        // Xuất file habits.js mới
         function exportUpdatedJS() {
             const fileContent = "const habitData = " + JSON.stringify(localData, null, 4) + ";";
             const blob = new Blob([fileContent], { type: "text/javascript;charset=utf-8" });
