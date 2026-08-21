@@ -117,6 +117,14 @@
 
         /* ----- Nút xóa thói quen & dòng phân cách nhóm ----- */
         .habit-name-cell { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+        .habit-name-text { flex: 1; }
+        .drag-handle {
+            flex-shrink: 0; color: #cbd5e1; font-size: 18px; line-height: 1;
+            padding: 2px 6px 2px 0; cursor: grab; touch-action: none; user-select: none;
+        }
+        #week-table-body tr.dragging { opacity: 0.4; }
+        #week-table-body tr.dragging .drag-handle { cursor: grabbing; }
+        #week-table-body tr.drag-over td { border-top: 2px solid #3498db; }
         .delete-btn {
             flex-shrink: 0; border: none; background: transparent; color: #cbd5e1;
             font-size: 14px; cursor: pointer; padding: 2px 4px; line-height: 1;
@@ -507,11 +515,14 @@
             const tbody = document.getElementById('week-table-body');
             tbody.innerHTML = '';
 
-            function renderRow(row, rowIndex) {
+            function renderRow(row, rowIndex, groupKey) {
                 const tr = document.createElement('tr');
+                tr.dataset.rowIndex = rowIndex;
+                tr.dataset.group = groupKey;
                 let html = `<td>
                     <div class="habit-name-cell">
-                        <span>${habitDisplayName(row)}</span>
+                        <span class="drag-handle" title="Kéo để sắp xếp">⠿</span>
+                        <span class="habit-name-text">${habitDisplayName(row)}</span>
                         <button class="delete-btn" onclick="deleteHabit(${rowIndex})" title="Xóa thói quen">✕</button>
                     </div>
                 </td>`;
@@ -532,15 +543,90 @@
             }
 
             const { positives, negatives } = groupHabitsForDisplay();
-            positives.forEach(({ row, idx }) => renderRow(row, idx));
+            positives.forEach(({ row, idx }) => renderRow(row, idx, 'pos'));
             if (negatives.length > 0) {
                 const divider = document.createElement('tr');
                 divider.className = 'group-divider';
                 divider.innerHTML = `<td colspan="8">⚠️ CẦN GIẢM</td>`;
                 tbody.appendChild(divider);
-                negatives.forEach(({ row, idx }) => renderRow(row, idx));
+                negatives.forEach(({ row, idx }) => renderRow(row, idx, 'neg'));
             }
         }
+
+        /* ==========================================================
+           KÉO THẢ SẮP XẾP LẠI THỨ TỰ THÓI QUEN (bảng tuần)
+           - Dùng Pointer Events (chạy tốt trên cả chuột lẫn cảm ứng),
+             gắn 1 lần bằng event delegation trên tbody nên không cần
+             gắn lại sau mỗi lần render.
+           - Chỉ cho kéo trong cùng nhóm (tích cực với tích cực, cần
+             giảm với cần giảm) để không phá vỡ cách phân nhóm.
+           - Kéo xong mới đổi vị trí thật trong localData (không di
+             chuyển DOM sống theo từng khung hình) — đơn giản và ổn
+             định hơn, tránh giật lag khi cuộn.
+           ========================================================== */
+        let dragState = null;
+
+        function onHabitDragStart(e, tr) {
+            e.preventDefault();
+            dragState = {
+                fromIndex: parseInt(tr.dataset.rowIndex, 10),
+                group: tr.dataset.group,
+                tr: tr,
+                overRow: null
+            };
+            tr.classList.add('dragging');
+            document.addEventListener('pointermove', onHabitDragMove);
+            document.addEventListener('pointerup', onHabitDragEnd);
+        }
+
+        function onHabitDragMove(e) {
+            if (!dragState) return;
+            const rows = document.querySelectorAll(
+                `#week-table-body tr[data-group="${dragState.group}"]`
+            );
+            let overRow = null;
+            rows.forEach(row => {
+                if (row === dragState.tr) return;
+                const rect = row.getBoundingClientRect();
+                if (e.clientY >= rect.top && e.clientY <= rect.bottom) overRow = row;
+            });
+            document.querySelectorAll('#week-table-body tr.drag-over')
+                .forEach(r => r.classList.remove('drag-over'));
+            if (overRow) overRow.classList.add('drag-over');
+            dragState.overRow = overRow;
+        }
+
+        function onHabitDragEnd() {
+            if (!dragState) return;
+            document.removeEventListener('pointermove', onHabitDragMove);
+            document.removeEventListener('pointerup', onHabitDragEnd);
+            dragState.tr.classList.remove('dragging');
+            document.querySelectorAll('#week-table-body tr.drag-over')
+                .forEach(r => r.classList.remove('drag-over'));
+
+            if (dragState.overRow) {
+                const fromIndex = dragState.fromIndex;
+                const toIndex = parseInt(dragState.overRow.dataset.rowIndex, 10);
+                if (fromIndex !== toIndex) {
+                    const item = localData.splice(fromIndex, 1)[0];
+                    localData.splice(toIndex, 0, item);
+                    localMeta = { updatedAt: new Date().toISOString() };
+                    saveCache();
+                    renderWeekTable();
+                    renderMonthTable();
+                    renderGoalsTable();
+                }
+            }
+            dragState = null;
+        }
+
+        document.getElementById('week-table-body').addEventListener('pointerdown', function (e) {
+            const handle = e.target.closest('.drag-handle');
+            if (!handle) return;
+            const tr = handle.closest('tr');
+            if (!tr || !tr.dataset.group) return;
+            onHabitDragStart(e, tr);
+        });
 
         function toggleHabit(rowIndex, dateKey, isChecked) {
             localData[rowIndex].log = localData[rowIndex].log || {};
