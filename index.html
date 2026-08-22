@@ -146,6 +146,7 @@
         .quick-goal-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: #2ecc71; flex-shrink: 0; cursor: pointer; }
         .quick-goal-row .goal-text { flex: 1; font-size: 14px; }
         .quick-goal-row .goal-text.done { text-decoration: line-through; color: #94a3b8; }
+        .habit-actions { display: flex; gap: 2px; flex-shrink: 0; }
         .goals-divider {
             font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase;
             margin: 14px 0 4px; padding-top: 10px; border-top: 1px solid #e2e8f0;
@@ -670,7 +671,10 @@
                         <input type="checkbox" ${done ? 'checked' : ''}
                                onchange="toggleHabit(${idx}, '${todayKey}', this.checked)">
                         <span class="goal-text ${done ? 'done' : ''}">${row.Habit}</span>
-                        <button class="delete-btn" onclick="deleteHabit(${idx})" title="Xóa mục tiêu">✕</button>
+                        <span class="habit-actions">
+                            <button class="delete-btn" onclick="editQuickGoal(${idx})" title="Sửa mục tiêu">✏️</button>
+                            <button class="delete-btn" onclick="deleteHabit(${idx})" title="Xóa mục tiêu">✕</button>
+                        </span>
                     </div>`;
             }
 
@@ -713,6 +717,19 @@
             localMeta = { updatedAt: new Date().toISOString() };
             saveCache();
             input.value = '';
+            renderGoalsTable();
+        }
+
+        function editQuickGoal(idx) {
+            const row = localData[idx];
+            if (!row) return;
+            const newText = prompt('Sửa mục tiêu:', row.Habit);
+            if (newText === null) return;          // bấm Cancel, không đổi gì
+            const trimmed = newText.trim();
+            if (!trimmed) return;                  // để trống thì không lưu, giữ tên cũ
+            row.Habit = trimmed;
+            localMeta = { updatedAt: new Date().toISOString() };
+            saveCache();
             renderGoalsTable();
         }
 
