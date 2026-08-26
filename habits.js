@@ -6,7 +6,11 @@ const habitData = [
         "targetPeriod": null,
         "log": {
             "2026-08-21": 1,
-            "2026-08-20": 1
+            "2026-08-20": 1,
+            "2026-08-24": 0,
+            "2026-08-25": 0,
+            "2026-08-26": 0,
+            "2026-08-23": 1
         }
     },
     {
@@ -14,21 +18,39 @@ const habitData = [
         "type": "tich_cuc",
         "target": null,
         "targetPeriod": null,
-        "log": {}
+        "log": {
+            "2026-08-24": 1,
+            "2026-08-25": 1,
+            "2026-08-26": 1,
+            "2026-08-23": 1,
+            "2026-08-22": 1
+        }
     },
     {
         "Habit": "Uống thuốc Moxacin 2v Sáng trước ăn",
         "type": "tich_cuc",
         "target": null,
         "targetPeriod": null,
-        "log": {}
+        "log": {
+            "2026-08-24": 1,
+            "2026-08-25": 1,
+            "2026-08-26": 1,
+            "2026-08-23": 1,
+            "2026-08-22": 1
+        }
     },
     {
         "Habit": "Uống thuốc Klacid Forte 1v Trưa sau ăn",
         "type": "tich_cuc",
         "target": null,
         "targetPeriod": null,
-        "log": {}
+        "log": {
+            "2026-08-24": 1,
+            "2026-08-25": 1,
+            "2026-08-26": 1,
+            "2026-08-23": 1,
+            "2026-08-22": 1
+        }
     },
     {
         "Habit": "Đọc sách 20 phút",
@@ -50,7 +72,8 @@ const habitData = [
         "log": {
             "2026-08-21": 1,
             "2026-08-18": 1,
-            "2026-08-17": 1
+            "2026-08-17": 1,
+            "2026-08-25": 1
         }
     },
     {
@@ -58,14 +81,25 @@ const habitData = [
         "type": "tich_cuc",
         "target": null,
         "targetPeriod": null,
-        "log": {}
+        "log": {
+            "2026-08-24": 1,
+            "2026-08-25": 1,
+            "2026-08-26": 0,
+            "2026-08-23": 1,
+            "2026-08-22": 1
+        }
     },
     {
         "Habit": "Uống thuốc Klacid Forte 1v Tối sau ăn",
         "type": "tich_cuc",
         "target": null,
         "targetPeriod": null,
-        "log": {}
+        "log": {
+            "2026-08-24": 1,
+            "2026-08-25": 1,
+            "2026-08-23": 1,
+            "2026-08-22": 1
+        }
     },
     {
         "Habit": "Uống nghệ Nano Cucumin trước khi ngủ",
@@ -77,7 +111,8 @@ const habitData = [
             "2026-08-20": 1,
             "2026-08-19": 1,
             "2026-08-17": 1,
-            "2026-08-18": 1
+            "2026-08-18": 1,
+            "2026-08-22": 1
         }
     },
     {
@@ -92,9 +127,11 @@ const habitData = [
         "type": "muc_tieu",
         "target": null,
         "targetPeriod": null,
-        "log": {}
+        "log": {
+            "2026-08-26": 1
+        }
     }
 ];
 const habitDataMeta = {
-    "generatedAt": "2026-08-22T08:02:20.117Z"
+    "generatedAt": "2026-08-26T06:55:25.210Z"
 };

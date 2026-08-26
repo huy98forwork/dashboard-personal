@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Dashboard Protected</title>
 
+    <!-- Phím tắt trên màn hình chính điện thoại (Add to Home Screen) -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Habit Dashboard">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#3498db">
+
     <!-- Link liên kết đến file habits.js -->
     <script src="habits.js"></script>
 
@@ -52,7 +61,8 @@
         /* ----- GIAO DIỆN DASHBOARD ----- */
         #dashboard-content { display: none; }
 
-        h1 { font-size: 1.4rem; text-align: center; margin: 10px 0 15px 0; }
+        h1 { font-size: 1.4rem; text-align: center; margin: 10px 0 0 0; }
+        .update-info { font-size: 11px; color: #94a3b8; text-align: center; margin: 2px 0 15px; }
         h2 { font-size: 1.1rem; margin-top: 0; color: #2c3e50; }
         .card {
             background: #ffffff;
@@ -190,6 +200,7 @@
     <!-- NỘI DUNG DASHBOARD -->
     <div id="dashboard-content">
         <h1>📊 Habit Dashboard</h1>
+        <div class="update-info" id="update-info"></div>
 
         <div class="card">
             <h2>🎯 Mục Tiêu Trọng Tâm</h2>
@@ -352,6 +363,28 @@
         function saveCache() {
             localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify(localData));
             localStorage.setItem(STORAGE_META_KEY, JSON.stringify(localMeta));
+            renderUpdateInfo();
+        }
+
+        // Hien thi thoi gian cap nhat cua file habits.js dang tai va cua may nay
+        function formatDateTime(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            if (isNaN(d.getTime())) return '';
+            const pad = n => String(n).padStart(2, '0');
+            return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+        function renderUpdateInfo() {
+            const el = document.getElementById('update-info');
+            const fileMeta = (typeof habitDataMeta !== 'undefined') ? habitDataMeta : null;
+            const parts = [];
+            if (fileMeta && fileMeta.generatedAt) {
+                parts.push(`File: ${formatDateTime(fileMeta.generatedAt)}`);
+            }
+            if (localMeta && localMeta.updatedAt) {
+                parts.push(`Máy này: ${formatDateTime(localMeta.updatedAt)}`);
+            }
+            el.textContent = parts.length ? 'Cập nhật lần cuối — ' + parts.join(' · ') : '';
         }
 
         // gộp thói quen mới xuất hiện trong file (thêm qua Excel) mà cache chưa có
