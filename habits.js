@@ -10,46 +10,10 @@ const habitData = [
             "2026-08-24": 0,
             "2026-08-25": 0,
             "2026-08-26": 0,
-            "2026-08-23": 1
-        }
-    },
-    {
-        "Habit": "Uống thuốc Pantoprazol 1v Sáng trước ăn 30 phút",
-        "type": "tich_cuc",
-        "target": null,
-        "targetPeriod": null,
-        "log": {
-            "2026-08-24": 1,
-            "2026-08-25": 1,
-            "2026-08-26": 1,
             "2026-08-23": 1,
-            "2026-08-22": 1
-        }
-    },
-    {
-        "Habit": "Uống thuốc Moxacin 2v Sáng trước ăn",
-        "type": "tich_cuc",
-        "target": null,
-        "targetPeriod": null,
-        "log": {
-            "2026-08-24": 1,
-            "2026-08-25": 1,
-            "2026-08-26": 1,
-            "2026-08-23": 1,
-            "2026-08-22": 1
-        }
-    },
-    {
-        "Habit": "Uống thuốc Klacid Forte 1v Trưa sau ăn",
-        "type": "tich_cuc",
-        "target": null,
-        "targetPeriod": null,
-        "log": {
-            "2026-08-24": 1,
-            "2026-08-25": 1,
-            "2026-08-26": 1,
-            "2026-08-23": 1,
-            "2026-08-22": 1
+            "2026-09-01": 0,
+            "2026-09-02": 1,
+            "2026-09-03": 1
         }
     },
     {
@@ -73,32 +37,10 @@ const habitData = [
             "2026-08-21": 1,
             "2026-08-18": 1,
             "2026-08-17": 1,
-            "2026-08-25": 1
-        }
-    },
-    {
-        "Habit": "Uống thuốc Moxacin 2v Tối trước ăn",
-        "type": "tich_cuc",
-        "target": null,
-        "targetPeriod": null,
-        "log": {
-            "2026-08-24": 1,
             "2026-08-25": 1,
-            "2026-08-26": 0,
-            "2026-08-23": 1,
-            "2026-08-22": 1
-        }
-    },
-    {
-        "Habit": "Uống thuốc Klacid Forte 1v Tối sau ăn",
-        "type": "tich_cuc",
-        "target": null,
-        "targetPeriod": null,
-        "log": {
-            "2026-08-24": 1,
-            "2026-08-25": 1,
-            "2026-08-23": 1,
-            "2026-08-22": 1
+            "2026-08-28": 1,
+            "2026-08-26": 1,
+            "2026-09-02": 1
         }
     },
     {
@@ -120,7 +62,9 @@ const habitData = [
         "type": "muc_tieu",
         "target": null,
         "targetPeriod": null,
-        "log": {}
+        "log": {
+            "2026-09-03": 1
+        }
     },
     {
         "Habit": "Tiếp khách (anh Công, anh Thịnh) T5 20/8/2026",
@@ -128,10 +72,11 @@ const habitData = [
         "target": null,
         "targetPeriod": null,
         "log": {
-            "2026-08-26": 1
+            "2026-08-26": 1,
+            "2026-09-03": 1
         }
     }
 ];
 const habitDataMeta = {
-    "generatedAt": "2026-08-26T06:55:25.210Z"
+    "generatedAt": "2026-09-03T07:04:53.727Z"
 };
